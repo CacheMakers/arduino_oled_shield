@@ -12,8 +12,8 @@ int dnR = 12;
 
 int ballX = 64;
 int ballY = 32;
-int velX = 4;
-int velY = 4;
+int velX = 2;
+int velY = 2;
 
 int padW = 5;
 int padH = 25;
@@ -21,8 +21,8 @@ int padH = 25;
 int padL = 32;
 int padR = 32;
 
-int spdL = 1;
-int spdR = 1;
+int spdL = 2;
+int spdR = 2;
 
 void setup()   
 {                
@@ -40,39 +40,65 @@ void setup()
 
 void loop() 
 {
+  // update ball position
   ballX += velX;
   ballY += velY;
 
-  if(ballX >= 128 || ballX <= 0)
+  // bounce off left paddle
+  if(ballX > 10 && ballX < 10+padW)
   {
-    velX = -velX;
+    if(ballY > (padL-(padH/2)) && ballY < (padL+(padH/2)) && velX < 0)
+    {
+      velX = -velX;
+    }
   }
+
+  // bounce off right paddle
+  if(ballX > 118 && ballX < 118+padW)
+  {
+    if(ballY > (padR-(padH/2)) && ballY < (padR+(padH/2)) && velX > 0)
+    {
+      velX = -velX;
+    }
+  }
+
+  // bounce off top and bottom
   if(ballY >= 64 || ballY <= 0)
   {
     velY = -velY;
   }
 
-  if(digitalRead(upL) == LOW)
+  // reset missed ball
+  if(ballX < 0 || ballX > 128)
+  {
+    ballX = 64;
+    ballY = 32;
+  }
+
+  // move paddles
+  if(digitalRead(upL) == LOW && padL > 0)
   {
     padL -= spdL;
   }
-  if(digitalRead(dnL) == LOW)
+  if(digitalRead(dnL) == LOW && padL < 64)
   {
     padL += spdL;
   }
-  if(digitalRead(upR) == LOW)
+  if(digitalRead(upR) == LOW && padR > 0)
   {
     padR -= spdR;
   }
-  if(digitalRead(dnR) == LOW)
+  if(digitalRead(dnR) == LOW && padR < 64)
   {
     padR += spdR;
   }
-  
+
+  // draw ball, paddles, etc. and update display
   display.clearDisplay();
   display.fillCircle(ballX, ballY, 2, WHITE);
   display.fillRect(10,padL-(padH/2),padW,padH, WHITE);
   display.fillRect(118,padR-(padH/2),padW,padH, WHITE);
+  display.fillRect(63,0,2,64,WHITE);
   display.display();
   delay(1);
 }
