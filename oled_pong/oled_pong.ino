@@ -5,6 +5,11 @@
 #define OLED_RESET 4
 Adafruit_SSD1306 display(OLED_RESET);
 
+// uncomment this line to disable sound
+#define MUTE
+
+int buzz = 7;
+
 int upL = 9;
 int dnL = 10;
 int upR = 11;
@@ -24,6 +29,9 @@ int padR = 32;
 int spdL = 2;
 int spdR = 2;
 
+int scoreL = 0;
+int scoreR = 0;
+
 void setup()   
 {                
   Serial.begin(9600);
@@ -31,6 +39,10 @@ void setup()
   // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
   //display.begin(SSD1306_SWITCHCAPVCC, 0x3D);  // initialize with the I2C addr 0x3D (for the 128x64)
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // changed this to 0x3C to make it work
+
+  #ifndef MUTE
+  pinMode(buzz, OUTPUT);
+  #endif
 
   pinMode(upL, INPUT_PULLUP);
   pinMode(dnL, INPUT_PULLUP);
@@ -50,6 +62,9 @@ void loop()
     if(ballY > (padL-(padH/2)) && ballY < (padL+(padH/2)) && velX < 0)
     {
       velX = -velX;
+      #ifndef MUTE
+      tone(buzz,277,300);
+      #endif
     }
   }
 
@@ -59,6 +74,9 @@ void loop()
     if(ballY > (padR-(padH/2)) && ballY < (padR+(padH/2)) && velX > 0)
     {
       velX = -velX;
+      #ifndef MUTE
+      tone(buzz,277,300);
+      #endif
     }
   }
 
@@ -66,13 +84,39 @@ void loop()
   if(ballY >= 64 || ballY <= 0)
   {
     velY = -velY;
+    #ifndef MUTE
+    tone(buzz,554,300);
+    #endif
   }
 
-  // reset missed ball
-  if(ballX < 0 || ballX > 128)
+  // reset missed ball, update score
+  if(ballX < 0)
   {
     ballX = 64;
     ballY = 32;
+    scoreR++;
+    #ifndef MUTE
+    tone(buzz,150,600);
+    #endif
+    delay(600);
+    if(random(1) == 0)
+    {
+      velX = -velX;
+    }
+  }
+  if(ballX > 128)
+  {
+    ballX = 64;
+    ballY = 32;
+    scoreL++;
+    #ifndef MUTE
+    tone(buzz,150,600);
+    #endif
+    delay(600);
+    if(random(1) == 0)
+    {
+      velX = -velX;
+    }
   }
 
   // move paddles
@@ -93,12 +137,26 @@ void loop()
     padR += spdR;
   }
 
-  // draw ball, paddles, etc. and update display
+  /* 
+   * draw ball, paddles, etc. and update display 
+   */
+
   display.clearDisplay();
+  // ball
   display.fillCircle(ballX, ballY, 2, WHITE);
+  // paddles
   display.fillRect(10,padL-(padH/2),padW,padH, WHITE);
   display.fillRect(118,padR-(padH/2),padW,padH, WHITE);
+  // midline
   display.fillRect(63,0,2,64,WHITE);
+  // scores
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(49, 5);
+  display.print(scoreL);
+  display.setCursor(74, 5);
+  display.print(scoreR);
+  // update
   display.display();
   delay(1);
 }
