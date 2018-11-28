@@ -8,12 +8,12 @@ Adafruit_SSD1306 display(OLED_RESET);
 // uncomment this line to disable sound
 #define MUTE
 
-int buzz = 7;
+int buzz = 4;
 
-int upL = 9;
-int dnL = 10;
-int upR = 11;
-int dnR = 12;
+int upL = 10;
+int dnL = 11;
+int upR = 6;
+int dnR = 7;
 
 int ballX = 64;
 int ballY = 32;
