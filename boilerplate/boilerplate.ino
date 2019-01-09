@@ -35,10 +35,6 @@ void setup()
 
 void loop() 
 {
-  while(digitalRead(bY) == HIGH)
-  {
-    delay(1);
-  }
   display.clearDisplay();
   display.fillCircle(64,32,10,WHITE);
   display.display();
