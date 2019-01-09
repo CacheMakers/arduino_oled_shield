@@ -5,17 +5,17 @@
 #define OLED_RESET 4
 Adafruit_SSD1306 display(OLED_RESET);
 
-int buzz = 4;
+byte buzz = 4;
 
-int bA = 5;
-int bX = 6;
-int bB = 7;
-int bY = 8;
+byte bA = 5;
+byte bX = 6;
+byte bB = 7;
+byte bY = 8;
 
-int rgt = 9;
-int up  = 10;
-int dwn = 11;
-int lft = 12;
+byte rgt = 9;
+byte up  = 10;
+byte dwn = 11;
+byte lft = 12;
 
 void setup()   
 {                
